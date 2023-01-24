@@ -146,9 +146,11 @@ class ResnetObjectDetector(nn.Module):
 
 class VGG11(nn.Module):
     """ VGG11 inspired feature extraction layers """
-    def __init__(self, nb_classes):
+    def __init__(self, in_channels = 3, num_classes = 1000):
         """ initialize the network """
         super().__init__()
+        self.in_channels = in_channels
+        self.num_classes = num_classes
         self.features = nn.Sequential(
             nn.Conv2d(self.in_channels, 64, kernel_size=3, padding=1),
             nn.ReLU(),
