@@ -143,3 +143,55 @@ class ResnetObjectDetector(nn.Module):
         x = self.features(x)
         # TODO: compute and add the bounding box regressor term
         return self.classifier(x)
+
+class VGG11(nn.Module):
+    """ VGG11 inspired feature extraction layers """
+    def __init__(self, nb_classes):
+        """ initialize the network """
+        super().__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(self.in_channels, 64, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Conv2d(128, 256, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(256, 256, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Conv2d(256, 512, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(512, 512, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Conv2d(512, 512, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(512, 512, kernel_size=3, padding=1),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2)
+        )
+        self.features.apply(init_weights)
+
+        # create classifier path for class label prediction
+        self.classifier = nn.Sequential(
+            # dimension = 64 [nb features per map pixel] x 3x3 [nb_map_pixels]
+            # 3 = ImageNet_image_res/(maxpool_stride^#maxpool_layers) = 224/4^3
+            nn.Linear(in_features=512*7*7, out_features=512),
+            nn.ReLU(),
+            nn.Dropout2d(0.5),
+            nn.Linear(in_features=512, out_features=512),
+            nn.ReLU(),
+            nn.Dropout2d(0.5),
+            nn.Linear(in_features=512, out_features=self.num_classes)
+        )
+        self.classifier.apply(init_weights)
+
+        # create regressor path for bounding box coordinates prediction
+        # TODO: take inspiration from above without dropouts
+
+    def forward(self, x):
+        # get features from input then run them through the classifier
+        x = self.features(x)
+        return self.classifier(x)
