@@ -93,11 +93,11 @@ class SimpleDetector(nn.Module):
 
     # create regressor path for bounding box coordinates prediction
 
-    def forward(self, x):
+    def forward(self, images, bbox):
         # get features from input then run them through the classifier
-        x = self.features(x)
+        images = self.features(images)
         # TODO: compute and add the bounding box regressor term
-        return self.classifier(x), self.bounding_boxes(x)
+        return self.classifier(images), self.bounding_boxes(bbox)
 
 # TODO: create a new class based on SimpleDetector to create a deeper model
 class DeeperDetector():

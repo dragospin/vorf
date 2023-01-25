@@ -1,6 +1,6 @@
 from model.dataset import ImageDataset
-#from model.network import SimpleDetector as ObjectDetector
-from model.network import VGG11 as ObjectDetector
+from model.network import SimpleDetector as ObjectDetector
+#from model.network import VGG11 as ObjectDetector
 from model import config
 import torch
 from torch.utils.data import DataLoader
@@ -86,10 +86,10 @@ if __name__ == '__main__':
         for batch in loader:
             # send the inputs and training annotations to the device
             # TODO: modify line below to get bbox data
-            images, labels = [datum.to(config.DEVICE) for datum in batch]
-
+            images, start, end, labels = [datum.to(config.DEVICE) for datum in batch]
             # perform a forward pass and calculate the training loss
-            predict = object_detector(images)
+            predict, box_predict = object_detector(images, start, end)
+
 
             # TODO: add loss term for bounding boxes
             bbox_loss = 0

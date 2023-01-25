@@ -14,7 +14,7 @@ class ImageDataset(Dataset):
     def __getitem__(self, index):
         # retrieve annotations from stored list
         # TODO: retrieve bounding box labels
-        filename, _, _, _, _, label = self.data[index]
+        filename, startx, starty, endx, endy, label = self.data[index]
 
         # get full path of filename
         image_path = os.path.join(config.IMAGES_PATH, label, filename)
@@ -36,7 +36,7 @@ class ImageDataset(Dataset):
 
         # return a tuple of the images, labels, and bounding box coordinates
         # TODO: add to tuple: normalized bounding box annotations (as tensor)
-        return image, label
+        return image, (startx, starty), (endx, endy), label
 
     def __len__(self):
         # return the size of the dataset
