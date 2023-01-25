@@ -224,4 +224,5 @@ class VGG11(nn.Module):
     def forward(self, x):
         # get features from input then run them through the classifier
         x = self.features(x)
+        x =x.view(x.size(0), -1)
         return self.classifier(x)
